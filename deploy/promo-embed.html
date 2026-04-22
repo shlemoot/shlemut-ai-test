@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>שלמות AI — סרטון פרומו</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800;900&family=Heebo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; font-family: 'Assistant', 'Heebo', sans-serif; cursor: pointer; }
+
+  /* Play overlay — shown until user clicks */
+  #play-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: radial-gradient(circle at center, rgba(20,20,30,0.4), rgba(0,0,0,0.75));
+    backdrop-filter: blur(2px);
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 0.5s ease;
+  }
+  #play-overlay.hidden { opacity: 0; pointer-events: none; }
+  #play-btn {
+    width: 110px; height: 110px; border-radius: 50%;
+    background: linear-gradient(135deg, #d4a843, #e8c460);
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 10px rgba(212,168,67,0.15), 0 0 60px rgba(212,168,67,0.6), 0 12px 40px rgba(0,0,0,0.5);
+    animation: playPulse 2.2s ease-in-out infinite;
+    transition: transform 0.2s;
+  }
+  #play-btn:hover { transform: scale(1.08); }
+  #play-btn svg { fill: #000; width: 42px; height: 42px; margin-right: -4px; }
+  @keyframes playPulse {
+    0%, 100% { box-shadow: 0 0 0 10px rgba(212,168,67,0.15), 0 0 60px rgba(212,168,67,0.6), 0 12px 40px rgba(0,0,0,0.5); }
+    50% { box-shadow: 0 0 0 22px rgba(212,168,67,0), 0 0 80px rgba(212,168,67,0.8), 0 12px 40px rgba(0,0,0,0.5); }
+  }
+  #play-label {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    color: #fff; font-size: 14px; font-weight: 700; letter-spacing: 0.3px;
+    background: rgba(0,0,0,0.6); padding: 8px 18px; border-radius: 999px;
+    border: 1px solid rgba(212,168,67,0.35); direction: rtl;
+  }
+
+  /* Hide any leftover scrollbars */
+  ::-webkit-scrollbar { display: none; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<div id="play-overlay">
+  <button id="play-btn" onclick="startPlayback()">
+    <svg viewBox="0 0 24 24"><polygon points="7,5 19,12 7,19"/></svg>
+  </button>
+  <div id="play-label">לחצו להפעלה — עם מוזיקה</div>
+</div>
+
+<audio id="bg-audio" loop preload="auto" src="bg-music.mp3"></audio>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="animations.jsx"></script>
+<script type="text/babel" src="Scenes.jsx"></script>
+
+<script type="text/babel">
+  const audio = document.getElementById('bg-audio');
+  const overlay = document.getElementById('play-overlay');
+
+  function postToParent(type) {
+    try { window.parent.postMessage({ type, source: 'shlemut-promo' }, '*'); } catch(e) {}
+  }
+
+  function startPlayback() {
+    overlay.classList.add('hidden');
+
+    // Tell parent (site) to mute its music
+    postToParent('promo-play');
+
+    // Reset timeline
+    try {
+      localStorage.setItem('shlemut-promo', '0');
+      const slider = document.querySelector('input[type="range"]');
+      if (slider) {
+        const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+        setter.call(slider, '0');
+        slider.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    } catch(e) {}
+
+    // Start audio at 25% offset like the site
+    try {
+      if (audio.duration && isFinite(audio.duration)) audio.currentTime = audio.duration * 0.25;
+    } catch(e) {}
+    audio.volume = 0.7;
+    audio.play().catch(() => {});
+
+    // When 60s pass, fade out audio + tell parent we're done
+    setTimeout(() => {
+      let v = audio.volume;
+      const fade = setInterval(() => {
+        v = Math.max(0, v - 0.05);
+        audio.volume = v;
+        if (v <= 0) { clearInterval(fade); audio.pause(); }
+      }, 80);
+      postToParent('promo-end');
+    }, 60000);
+  }
+  window.startPlayback = startPlayback;
+
+  const App = () => (
+    <Stage width={1920} height={1080} duration={60} background="#0a0a0a" persistKey="shlemut-promo-embed">
+      <Composition />
+    </Stage>
+  );
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+
+  // Listen for parent requests
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 'site-wants-promo-mute') {
+      audio.pause();
+    }
+  });
+</script>
+</body>
+</html>
