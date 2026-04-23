@@ -162,49 +162,246 @@ function GoldBadge({ text, x = '50%', y, size = 22 }) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// SCENE 1: LOGO SLAM (0 - 4s)
+// SCENE 1: DRAMATIC LOGO REVEAL (0 - 4s)
 // ══════════════════════════════════════════════════════════════════════════
 function Scene1_Logo() {
-  const { localTime: lt, progress } = useSprite();
-
-  // Zoom-in from huge, land on 1 at 0.6s
-  const scale = interpolate([0, 0.5, 0.7, 3, 3.5, 4], [8, 1, 1.08, 1, 1.2, 0], Easing.easeOutExpo)(lt);
-  const op = interpolate([0, 0.25, 3.5, 4], [0, 1, 1, 0], Easing.linear)(lt);
-
-  // RGB ring that rotates
+  const { localTime: lt } = useSprite();
   const t = useTime();
+
+  // Logo GIF entry: zoom from huge w/ rotation, land, then subtle pulse
+  const logoScale = interpolate([0, 0.6, 0.9, 2.5, 3, 4], [6, 0.9, 1.05, 1, 1.15, 0.4], Easing.easeOutExpo)(lt);
+  const logoOp = interpolate([0, 0.35, 3.4, 4], [0, 1, 1, 0], Easing.linear)(lt);
+  const logoRot = interpolate([0, 0.9], [-180, 0], Easing.easeOutBack)(lt);
+
+  // Text comes in after logo lands
+  const textOp = interpolate([1.0, 1.4, 3.4, 4], [0, 1, 1, 0], Easing.linear)(lt);
+  const textY = interpolate([1.0, 1.4], [40, 0], Easing.easeOutBack)(lt);
+
+  // RGB ring rotates behind
   const ringRot = t * 120;
+
+  // Glow pulse on the logo
+  const glowPulse = 1 + Math.sin(t * 3) * 0.15;
+
+  // Shockwave burst when logo lands (0.9s)
+  const shockProg = lt > 0.85 && lt < 1.8 ? (lt - 0.85) / 0.95 : -1;
+  const shockScale = shockProg >= 0 ? interpolate([0, 1], [0.5, 3.5], Easing.easeOutCubic)(shockProg) : 0;
+  const shockOp = shockProg >= 0 ? 1 - shockProg : 0;
 
   return (
     <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <RgbBG intensity={0.6} />
-      <Particles count={50} seed={1} />
+      <RgbBG intensity={0.7} />
+      <Particles count={60} seed={1} />
 
-      {/* RGB spinning ring */}
+      {/* Radial light rays from center */}
       <div style={{
-        position: 'absolute', width: 520, height: 520, borderRadius: '50%',
-        background: `conic-gradient(from ${ringRot}deg, #ff0000,#ff8000,#ffff00,#00ff00,#00ffff,#0080ff,#8000ff,#ff0080,#ff0000)`,
-        opacity: op * 0.55, filter: 'blur(40px)',
-        transform: `scale(${scale * 1.1})`,
+        position: 'absolute', left: '50%', top: '42%', transform: `translate(-50%,-50%) scale(${logoScale * 1.4}) rotate(${t * 20}deg)`,
+        width: 900, height: 900,
+        background: `conic-gradient(from 0deg, transparent 0deg, rgba(212,168,67,0.3) 5deg, transparent 10deg, transparent 30deg, rgba(245,216,122,0.25) 35deg, transparent 40deg)`,
+        opacity: logoOp * 0.7,
+        filter: 'blur(2px)',
       }} />
 
+      {/* RGB spinning ring behind logo */}
       <div style={{
-        position: 'relative', transform: `scale(${scale})`, opacity: op,
+        position: 'absolute', left: '50%', top: '42%',
+        width: 560, height: 560, borderRadius: '50%',
+        transform: `translate(-50%,-50%) scale(${logoScale * 1.1 * glowPulse})`,
+        background: `conic-gradient(from ${ringRot}deg, #ff0000,#ff8000,#ffff00,#00ff00,#00ffff,#0080ff,#8000ff,#ff0080,#ff0000)`,
+        opacity: logoOp * 0.55, filter: 'blur(50px)',
+      }} />
+
+      {/* Gold glow aura behind logo */}
+      <div style={{
+        position: 'absolute', left: '50%', top: '42%',
+        width: 640, height: 640, borderRadius: '50%',
+        transform: `translate(-50%,-50%) scale(${logoScale * glowPulse})`,
+        background: `radial-gradient(circle, ${BRAND.gold} 0%, ${BRAND.goldLight} 25%, transparent 60%)`,
+        opacity: logoOp * 0.6, filter: 'blur(40px)',
+      }} />
+
+      {/* Shockwave ring */}
+      {shockOp > 0 && (
+        <div style={{
+          position: 'absolute', left: '50%', top: '42%',
+          width: 400, height: 400, borderRadius: '50%',
+          transform: `translate(-50%,-50%) scale(${shockScale})`,
+          border: `4px solid ${BRAND.gold}`,
+          opacity: shockOp,
+          boxShadow: `0 0 80px ${BRAND.gold}, inset 0 0 80px ${BRAND.goldLight}`,
+        }} />
+      )}
+
+      {/* The LOGO GIF itself — center */}
+      <img src="shots/logo-nav.gif" alt="שלמות AI"
+        style={{
+          position: 'absolute', left: '50%', top: '42%',
+          width: 380, height: 'auto',
+          transform: `translate(-50%,-50%) scale(${logoScale}) rotate(${logoRot}deg)`,
+          opacity: logoOp,
+          filter: `drop-shadow(0 0 60px ${BRAND.gold}) drop-shadow(0 0 120px rgba(245,216,122,0.8)) drop-shadow(0 20px 60px rgba(0,0,0,0.8))`,
+          willChange: 'transform, opacity',
+        }}
+        onError={(e) => { e.target.style.display = 'none'; }}
+      />
+
+      {/* Text below logo */}
+      <div style={{
+        position: 'absolute', left: 0, right: 0, bottom: 140,
         textAlign: 'center', direction: 'rtl', fontFamily: HEB.fontFamily,
+        opacity: textOp, transform: `translateY(${textY}px)`,
       }}>
         <div style={{
-          fontSize: 220, fontWeight: 900, lineHeight: 1,
+          fontSize: 160, fontWeight: 900, lineHeight: 1,
           background: `linear-gradient(135deg, ${BRAND.gold}, ${BRAND.goldLight}, ${BRAND.gold})`,
           WebkitBackgroundClip: 'text', backgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           letterSpacing: '-0.04em',
-          filter: `drop-shadow(0 12px 60px rgba(212,168,67,0.6))`,
+          filter: `drop-shadow(0 8px 40px rgba(212,168,67,0.6))`,
         }}>שלמות AI</div>
         <div style={{
-          fontSize: 36, fontWeight: 600, color: BRAND.text, opacity: 0.8,
-          marginTop: 10, letterSpacing: '0.02em',
-        }}>SHLEMUT AI</div>
+          fontSize: 30, fontWeight: 600, color: BRAND.text, opacity: 0.75,
+          marginTop: 6, letterSpacing: '0.3em',
+        }}>STUDIO · SHLEMUT · AI</div>
       </div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// SCENE 1.5: MOCKUP REVEAL — show the product box
+// ══════════════════════════════════════════════════════════════════════════
+function Scene1b_Mockup() {
+  const { localTime: lt } = useSprite();
+  const t = useTime();
+  const op = interpolate([0, 0.3, 4.5, 5], [0, 1, 1, 0], Easing.linear)(lt);
+
+  // Box enters from far away (small, tilted) → lands front-and-center
+  const boxScale = interpolate([0, 0.8, 1.1, 4.2, 5], [0.1, 1.05, 1, 1, 0.7], Easing.easeOutExpo)(lt);
+  const boxRotY = interpolate([0, 1.2], [-45, 0], Easing.easeOutCubic)(lt);
+  const boxY = interpolate([0, 0.8], [80, 0], Easing.easeOutBack)(lt);
+  const boxOp = interpolate([0, 0.4, 4.2, 5], [0, 1, 1, 0], Easing.linear)(lt);
+
+  // Title text above
+  const titleOp = interpolate([0.3, 0.8], [0, 1], Easing.linear)(lt);
+  const titleY = interpolate([0.3, 0.8], [-30, 0], Easing.easeOutBack)(lt);
+
+  // Stats/features pops in AROUND the box
+  const feature1 = lt > 1.5;
+  const feature2 = lt > 1.9;
+  const feature3 = lt > 2.3;
+
+  // Gold glow pulse
+  const pulse = 1 + Math.sin(t * 4) * 0.08;
+
+  // Light sweep across box
+  const sweepX = interpolate([1.3, 2.3], [-100, 120], Easing.easeInOutCubic)(lt);
+  const sweepOp = lt > 1.3 && lt < 2.3 ? 1 : 0;
+
+  return (
+    <div style={{ position: 'absolute', inset: 0, opacity: op, overflow: 'hidden' }}>
+      <RgbBG intensity={0.5} />
+      <Particles count={40} seed={15} />
+      <GridFloor opacity={0.2} />
+
+      {/* Title */}
+      <div style={{
+        opacity: titleOp, transform: `translateY(${titleY}px)`,
+      }}>
+        <BigText text="הכירו את" size={64} y={80} color={BRAND.muted} weight={500} letterSpacing="0.15em" />
+        <RgbHeadline text="עורך אולטימטיבי + סוכן AI" size={100} y={160} />
+      </div>
+
+      {/* Gold radial glow behind box */}
+      <div style={{
+        position: 'absolute', left: '50%', top: '58%',
+        width: 900, height: 900, borderRadius: '50%',
+        transform: `translate(-50%,-50%) scale(${pulse})`,
+        background: `radial-gradient(circle, ${BRAND.gold} 0%, rgba(212,168,67,0.3) 30%, transparent 65%)`,
+        opacity: boxOp * 0.55, filter: 'blur(40px)',
+      }} />
+
+      {/* THE MOCKUP BOX */}
+      <div style={{
+        position: 'absolute', left: '50%', top: '58%',
+        transform: `translate(-50%,-50%) translateY(${boxY}px) scale(${boxScale}) perspective(1800px) rotateY(${boxRotY}deg)`,
+        transformStyle: 'preserve-3d',
+        opacity: boxOp,
+        filter: `drop-shadow(0 40px 80px rgba(0,0,0,0.8)) drop-shadow(0 0 60px rgba(212,168,67,0.4))`,
+      }}>
+        <img src="shots/mockup.png" alt="עורך אולטימטיבי + סוכן AI"
+          style={{ width: 720, height: 'auto', display: 'block' }}
+          onError={(e) => { e.target.style.display = 'none'; }}
+        />
+        {/* Light sweep */}
+        {sweepOp > 0 && (
+          <div style={{
+            position: 'absolute', left: 0, top: 0, width: '100%', height: '100%',
+            background: `linear-gradient(110deg, transparent ${sweepX}%, rgba(255,255,255,0.35) ${sweepX + 10}%, transparent ${sweepX + 20}%)`,
+            mixBlendMode: 'screen',
+            pointerEvents: 'none',
+          }} />
+        )}
+      </div>
+
+      {/* Floating feature badges around the box */}
+      {feature1 && (
+        <div style={{
+          position: 'absolute', right: 80, top: 340,
+          opacity: Math.min(1, (lt - 1.5) / 0.3),
+          transform: `translateX(${interpolate([1.5, 1.9], [50, 0], Easing.easeOutBack)(lt)}px)`,
+          direction: 'rtl', fontFamily: HEB.fontFamily,
+          padding: '22px 34px', borderRadius: 18,
+          background: 'rgba(20,20,20,0.85)',
+          border: `2px solid ${BRAND.gold}`,
+          boxShadow: `0 10px 40px rgba(212,168,67,0.4)`,
+          backdropFilter: 'blur(10px)',
+        }}>
+          <div style={{ fontSize: 52, fontWeight: 900, color: BRAND.gold, lineHeight: 1 }}>11</div>
+          <div style={{ fontSize: 22, fontWeight: 700, color: BRAND.text, marginTop: 4 }}>כלי פרימיום</div>
+          <div style={{ fontSize: 16, color: BRAND.muted, marginTop: 2 }}>למקצוענים</div>
+        </div>
+      )}
+
+      {feature2 && (
+        <div style={{
+          position: 'absolute', left: 80, top: 420,
+          opacity: Math.min(1, (lt - 1.9) / 0.3),
+          transform: `translateX(${interpolate([1.9, 2.3], [-50, 0], Easing.easeOutBack)(lt)}px)`,
+          direction: 'rtl', fontFamily: HEB.fontFamily,
+          padding: '22px 34px', borderRadius: 18,
+          background: 'rgba(20,20,20,0.85)',
+          border: `2px solid ${BRAND.gold}`,
+          boxShadow: `0 10px 40px rgba(212,168,67,0.4)`,
+          backdropFilter: 'blur(10px)',
+        }}>
+          <div style={{ fontSize: 52, fontWeight: 900, color: BRAND.goldLight, lineHeight: 1 }}>99</div>
+          <div style={{ fontSize: 22, fontWeight: 700, color: BRAND.text, marginTop: 4 }}>כלים מבוססי AI</div>
+          <div style={{ fontSize: 16, color: BRAND.muted, marginTop: 2 }}>לעימוד חכם</div>
+        </div>
+      )}
+
+      {feature3 && (
+        <div style={{
+          position: 'absolute', right: 100, bottom: 220,
+          opacity: Math.min(1, (lt - 2.3) / 0.3),
+          transform: `translateX(${interpolate([2.3, 2.7], [50, 0], Easing.easeOutBack)(lt)}px)`,
+          direction: 'rtl', fontFamily: HEB.fontFamily,
+          padding: '18px 28px', borderRadius: 14,
+          background: `linear-gradient(135deg, ${BRAND.gold}, ${BRAND.goldLight})`,
+          color: '#000', fontWeight: 800, fontSize: 26,
+          boxShadow: `0 10px 40px rgba(212,168,67,0.6)`,
+        }}>
+          ✨ שליחות הוצאה לאור
+        </div>
+      )}
+
+      {/* Tagline at bottom */}
+      {lt > 3.2 && (
+        <div style={{ opacity: Math.min(1, (lt - 3.2) / 0.3) }}>
+          <BigText text='"מפלצת של פרודקטיביות!!!"' size={42} y={960} color={BRAND.goldLight} weight={700} />
+        </div>
+      )}
     </div>
   );
 }
@@ -853,14 +1050,15 @@ function Composition() {
       <div style={{ position: 'absolute', inset: 0, background: BRAND.bgDeep }} />
 
       <Sprite start={0} end={4}><Scene1_Logo /></Sprite>
-      <Sprite start={4} end={10}><Scene2_TheEasyLife /></Sprite>
-      <Sprite start={10} end={17}><Scene3_OldWay /></Sprite>
-      <Sprite start={17} end={26}><Scene4_AiTakeover /></Sprite>
-      <Sprite start={26} end={35}><Scene5_Speed /></Sprite>
-      <Sprite start={35} end={42}><Scene6_ToolsGrid /></Sprite>
-      <Sprite start={42} end={50}><Scene7_Testimonials /></Sprite>
-      <Sprite start={50} end={56}><Scene7_Monster /></Sprite>
-      <Sprite start={56} end={60}><Scene8_CTA /></Sprite>
+      <Sprite start={4} end={9}><Scene1b_Mockup /></Sprite>
+      <Sprite start={9} end={14}><Scene2_TheEasyLife /></Sprite>
+      <Sprite start={14} end={20}><Scene3_OldWay /></Sprite>
+      <Sprite start={20} end={28}><Scene4_AiTakeover /></Sprite>
+      <Sprite start={28} end={36}><Scene5_Speed /></Sprite>
+      <Sprite start={36} end={42}><Scene6_ToolsGrid /></Sprite>
+      <Sprite start={42} end={49}><Scene7_Testimonials /></Sprite>
+      <Sprite start={49} end={55}><Scene7_Monster /></Sprite>
+      <Sprite start={55} end={60}><Scene8_CTA /></Sprite>
 
       {/* Global kick flash */}
       <Kick times={kicks} dur={0.1} />
@@ -876,6 +1074,6 @@ function Composition() {
 }
 
 Object.assign(window, {
-  Composition, Scene1_Logo, Scene2_TheEasyLife, Scene3_OldWay, Scene4_AiTakeover,
+  Composition, Scene1_Logo, Scene1b_Mockup, Scene2_TheEasyLife, Scene3_OldWay, Scene4_AiTakeover,
   Scene5_Speed, Scene6_ToolsGrid, Scene7_Testimonials, Scene7_Monster, Scene8_CTA, BRAND,
 });

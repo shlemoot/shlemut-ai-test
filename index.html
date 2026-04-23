@@ -3,178 +3,769 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Studio Shlemut AI — UI Kit</title>
+<title>עורך AI אולטימטיבי — תוסף חכם לאדובי אינדיזיין</title>
 <link rel="icon" type="image/gif" href="assets/images/logo-nav.gif">
+<meta name="description" content="עורך AI אולטימטיבי — תוסף AI חכם לאדובי אינדיזיין. עימוד ספרים, עריכת טקסט, סקריפטים אוטומטיים, Claude באינדיזיין — הכל בעברית. חינם לנצח עם 10 נקודות AI ביום!">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="colors_and_type.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/cinematic.css">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:var(--bg);color:var(--text);font-family:'Assistant','Heebo','Segoe UI',Arial,sans-serif;line-height:1.75;overflow-x:hidden;-webkit-font-smoothing:antialiased;position:relative;}
+/* ── Cursor: default + RGB halo ── */
+body{cursor:default !important;}
+a,button,.faq-q,.cta-btn,.cta-btn-outline,.nav-cta,.plan .btn{cursor:pointer !important;}
+.cursor-dot{display:none !important;}
+.cursor-ring{
+  width:48px !important;height:48px !important;border:none !important;
+  background:radial-gradient(circle,var(--cursor-color) 0%,transparent 70%) !important;
+  opacity:.25 !important;
+  pointer-events:none;mix-blend-mode:screen;
+}
+.cursor-ring.hover{width:64px !important;height:64px !important;opacity:.35 !important;}
 
-  /* ── Animated page background ────────────────────────── */
-  .site-bg{position:fixed;inset:0;z-index:-2;pointer-events:none;overflow:hidden;background:
-    radial-gradient(ellipse at 20% 0%,rgba(25,20,40,.9),transparent 60%),
-    radial-gradient(ellipse at 80% 100%,rgba(40,20,25,.85),transparent 60%),
-    #000;}
-  /* slow RGB aurora fog */
-  .site-bg::before{content:"";position:absolute;inset:-25%;
-    background:
-      radial-gradient(circle at 18% 30%,rgba(255,0,128,.18),transparent 40%),
-      radial-gradient(circle at 78% 22%,rgba(0,112,243,.16),transparent 42%),
-      radial-gradient(circle at 40% 85%,rgba(0,223,216,.14),transparent 42%),
-      radial-gradient(circle at 85% 75%,rgba(121,40,202,.17),transparent 42%),
-      radial-gradient(circle at 60% 50%,rgba(212,168,67,.10),transparent 50%);
-    filter:blur(40px);
-    animation:auroraDrift 28s ease-in-out infinite alternate;}
-  @keyframes auroraDrift{
-    0%  {transform:translate(0,0) scale(1);}
-    33% {transform:translate(4%,-3%) scale(1.08);}
-    66% {transform:translate(-3%,4%) scale(.96);}
-    100%{transform:translate(2%,-2%) scale(1.05);}
-  }
-  /* drifting conic gold ring */
-  .site-bg::after{content:"";position:absolute;top:-20%;left:-20%;width:140%;height:140%;
-    background:conic-gradient(from 0deg,transparent 0deg,rgba(212,168,67,.08) 30deg,transparent 80deg,
-      transparent 180deg,rgba(255,255,255,.04) 210deg,transparent 260deg,transparent 360deg);
-    filter:blur(60px);opacity:.6;
-    animation:conicSpin 45s linear infinite;}
-  @keyframes conicSpin{to{transform:rotate(360deg);}}
+/* ── Stats: 6 columns, always visible ── */
+.stats-grid{grid-template-columns:repeat(6,1fr) !important;max-width:1000px !important;}
+.stat{opacity:1 !important;transform:none !important;}
 
-  /* twinkling stars layer */
-  .site-stars{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.55;
-    background-image:
-      radial-gradient(1px 1px at 12% 18%,#fff,transparent 50%),
-      radial-gradient(1px 1px at 38% 42%,#d4a843,transparent 50%),
-      radial-gradient(1.5px 1.5px at 66% 14%,#fff,transparent 55%),
-      radial-gradient(1px 1px at 82% 64%,#a78bfa,transparent 50%),
-      radial-gradient(1px 1px at 22% 78%,#fff,transparent 50%),
-      radial-gradient(1.5px 1.5px at 54% 88%,#00dfd8,transparent 55%),
-      radial-gradient(1px 1px at 90% 30%,#fff,transparent 50%),
-      radial-gradient(1px 1px at 8% 54%,#ff4d8a,transparent 50%);
-    background-size:100% 100%;
-    animation:twinkle 6s ease-in-out infinite;}
-  @keyframes twinkle{0%,100%{opacity:.35;}50%{opacity:.75;}}
-  /* second star layer — slower parallax */
-  .site-stars::after{content:"";position:absolute;inset:0;
-    background-image:
-      radial-gradient(1px 1px at 28% 10%,#fff,transparent 50%),
-      radial-gradient(1px 1px at 48% 32%,#fff,transparent 50%),
-      radial-gradient(1px 1px at 72% 52%,#d4a843,transparent 50%),
-      radial-gradient(1px 1px at 18% 68%,#fff,transparent 50%),
-      radial-gradient(1px 1px at 94% 88%,#fff,transparent 50%);
-    opacity:.6;animation:twinkle 9s ease-in-out infinite -3s;}
+/* ── Download button: RGB like entry button ── */
+.download-box .dl-btn{
+  background:rgba(20,20,24,.8) !important;color:#fff !important;
+  border:2px solid rgba(212,168,67,.4) !important;
+  padding:18px 44px !important;border-radius:12px !important;
+  font-size:1.1rem !important;font-weight:700 !important;
+  position:relative;overflow:hidden;
+  backdrop-filter:blur(10px);letter-spacing:.5px;
+  text-decoration:none !important;
+}
+.download-box .dl-btn::before{
+  content:'';position:absolute;inset:-2px;border-radius:12px;
+  background:linear-gradient(90deg,#ff0000,#ff8000,#ffff00,#00ff00,#00ffff,#8000ff,#ff0080,#ff0000);
+  background-size:300% 100%;
+  animation:rgbBorder 4s linear infinite;
+  z-index:-1;padding:2px;
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+}
+.download-box .dl-btn .btn-text-dl{
+  background:linear-gradient(90deg,#ff0000,#ff8000,#ffff00,#00ff00,#00ffff,#8000ff,#ff0080,#ff0000);
+  background-size:300% 100%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:rgbText 5s linear infinite;
+}
 
-  /* subtle grain texture */
-  .site-grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.8'/></svg>");}
-  a{color:var(--gold);text-decoration:none;transition:color .3s;}
-  a:hover{color:var(--gold-light);}
-  ::selection{background:rgba(212,168,67,.3);color:#fff;}
-  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-30px)}}
-  @keyframes mockupFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-  @keyframes rgbText{0%{background-position:0% 50%}100%{background-position:300% 50%}}
-  @keyframes rgbHighlight{0%{background-position:0% 0%,0% 50%}100%{background-position:0% 0%,300% 50%}}
-  @keyframes logoPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 12px rgba(212,168,67,.3));}50%{transform:scale(1.04);filter:drop-shadow(0 0 24px rgba(212,168,67,.5));}}
-  @keyframes fogDrift{0%{transform:translate(0,0) scale(1);}33%{transform:translate(40px,-30px) scale(1.15);}66%{transform:translate(-30px,40px) scale(.9);}100%{transform:translate(20px,-20px) scale(1.05);}}
-  /* section tag */
-  @keyframes tagBorderRun{to{background-position:300% 0;}}
-  @keyframes tagFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
-  @keyframes tagPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,0,0,.5);transform:scale(1);}50%{box-shadow:0 0 0 6px rgba(0,0,0,0);transform:scale(1.2);}}
-  /* stats */
-  @keyframes statFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
-  @keyframes orbPulse{0%,100%{opacity:.35;transform:translateX(-50%) scale(1);}50%{opacity:.7;transform:translateX(-50%) scale(1.25);}}
-  @keyframes ping{0%,100%{box-shadow:0 0 0 0 rgba(212,168,67,.6);transform:scale(1);}50%{box-shadow:0 0 0 10px rgba(212,168,67,0);transform:scale(1.25);}}
-  @keyframes flashIn{from{opacity:0;transform:translateY(8px) scale(.9);}to{opacity:1;transform:translateY(0) scale(1);}}
-  /* features */
-  @keyframes featureFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
-  @keyframes orbit{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(-30px,20px) scale(1.2);}66%{transform:translate(20px,-10px) scale(.9);}}
-  @keyframes iconWiggle{0%,100%{transform:rotate(-4deg) scale(1);}25%{transform:rotate(6deg) scale(1.1);}50%{transform:rotate(-2deg) scale(1.05);}75%{transform:rotate(4deg) scale(1.08);}}
-  @keyframes gradShift{0%{background-position:0 0,0 50%;}100%{background-position:0 0,300% 50%;}}
-  /* site bg */
-  @keyframes auroraDrift{0%{transform:translate(0,0) scale(1);}33%{transform:translate(4%,-3%) scale(1.08);}66%{transform:translate(-3%,4%) scale(.96);}100%{transform:translate(2%,-2%) scale(1.05);}}
-  @keyframes conicSpin{to{transform:rotate(360deg);}}
-  @keyframes twinkle{0%,100%{opacity:.35;}50%{opacity:.75;}}
-  /* RGB cursor halo */
-  html,body,a,button,input,textarea,select,.hoverable{cursor:none !important;}
-  .cursor-dot{position:fixed;top:0;left:0;z-index:10001;pointer-events:none;
-    width:8px;height:8px;border-radius:50%;
-    background:var(--cursor-color,#ff0000);
-    box-shadow:0 0 8px var(--cursor-color,#ff0000);
-    transform:translate(-50%,-50%);transition:transform .1s ease;}
-  .cursor-ring{position:fixed;top:0;left:0;z-index:10000;pointer-events:none;
-    width:36px;height:36px;border-radius:50%;
-    border:1.5px solid var(--cursor-color,#ff0000);
-    background:radial-gradient(circle,var(--cursor-color,#ff0000) 0%,transparent 70%);
-    background-blend-mode:screen;opacity:.9;
-    mix-blend-mode:screen;
-    transform:translate(-50%,-50%);
-    transition:width .3s cubic-bezier(.25,.46,.45,.94),height .3s cubic-bezier(.25,.46,.45,.94),box-shadow .2s;
-    box-shadow:0 0 16px var(--cursor-color,#ff0000),inset 0 0 12px var(--cursor-color,#ff0000);}
-  .cursor-ring.hover{width:60px;height:60px;box-shadow:0 0 28px var(--cursor-color,#ff0000),inset 0 0 20px var(--cursor-color,#ff0000);}
-  .cursor-ring.click{width:24px;height:24px;}
-  button:hover,a:hover{opacity:1;}
-  .entry-btn::before{content:'';position:absolute;inset:-2px;border-radius:12px;background:linear-gradient(90deg,#ff0000,#ff8000,#ffff00,#00ff00,#00ffff,#8000ff,#ff0080,#ff0000);background-size:300% 100%;animation:rgbText 4s linear infinite;z-index:-1;padding:2px;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;}
+/* ── Marketplace: RGB title + highlight border ── */
+.marketplace .section-title{
+  background:linear-gradient(90deg,#ff0000,#ff8000,#ffff00,#00ff00,#00ffff,#0080ff,#8000ff,#ff0080,#ff0000) !important;
+  background-size:300% 100% !important;
+  -webkit-background-clip:text !important;-webkit-text-fill-color:transparent !important;background-clip:text !important;
+  animation:rgbText 6s linear infinite !important;
+}
+.mp-highlight{
+  border:2px solid transparent !important;
+  background-image:linear-gradient(rgba(28,28,30,.9),rgba(28,28,30,.9)),linear-gradient(90deg,#ff0000,#ff8000,#ffff00,#00ff00,#00ffff,#8000ff,#ff0080,#ff0000) !important;
+  background-origin:border-box !important;background-clip:padding-box,border-box !important;
+  background-size:100% 100%,300% 100% !important;
+  animation:rgbHighlight 6s linear infinite !important;
+}
+@keyframes rgbHighlight{0%{background-position:0% 0%,0% 50%}100%{background-position:0% 0%,300% 50%}}
+
+/* ── Hero-sub: ensure visible ── */
+.hero-sub{opacity:1 !important;transform:none !important;}
+.hero-sub span{opacity:1 !important;transform:none !important;}
+
+/* ── Testimonials title override ── */
 </style>
 </head>
 <body>
-<div class="site-bg" aria-hidden="true"></div>
-<div class="site-stars" aria-hidden="true"></div>
-<div class="site-grain" aria-hidden="true"></div>
-<div id="root"></div>
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-<script type="text/babel" src="Primitives.jsx"></script>
-<script type="text/babel" src="Nav.jsx"></script>
-<script type="text/babel" src="EntrySplash.jsx"></script>
-<script type="text/babel" src="RgbCursor.jsx"></script>
-<script type="text/babel" src="MusicPlayer.jsx"></script>
-<script type="text/babel" src="Hero.jsx"></script>
-<script type="text/babel" src="Stats.jsx"></script>
-<script type="text/babel" src="Features.jsx"></script>
-<script type="text/babel" src="Marketplace.jsx"></script>
-<script type="text/babel" src="HowItWorks.jsx"></script>
-<script type="text/babel" src="Gallery.jsx"></script>
-<script type="text/babel" src="Testimonials.jsx"></script>
-<script type="text/babel" src="Trial.jsx"></script>
-<script type="text/babel" src="Pricing.jsx"></script>
-<script type="text/babel" src="Download.jsx"></script>
-<script type="text/babel" src="FAQ.jsx"></script>
-<script type="text/babel" src="ContactCTA.jsx"></script>
-<script type="text/babel" src="Footer.jsx"></script>
-<script type="text/babel">
-  const App = () => {
-    const [entered, setEntered] = React.useState(() => {
-      try { return localStorage.getItem('shlemut-entered') === '1'; } catch (e) { return false; }
-    });
-    const enter = () => {
-      setEntered(true);
-      try { localStorage.setItem('shlemut-entered', '1'); } catch (e) {}
-    };
-    return (
-      <>
-        {!entered && <EntrySplash onEnter={enter} />}
-        <RgbCursor />
-        <MusicPlayer entered={entered} />
-        <Nav />
-        <Hero />
-        <Stats />
-        <Features />
-        <Marketplace />
-        <HowItWorks />
-        <Gallery />
-        <Testimonials />
-        <Trial />
-        <Pricing />
-        <Download />
-        <FAQ />
-        <Contact />
-        <FinalCTA />
-        <Footer />
-      </>
-    );
-  };
-  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-</script>
+
+<!-- Entry Splash -->
+<div class="entry-splash" id="entrySplash">
+  <div class="fog-canvas">
+    <div class="fog-orb f1"></div>
+    <div class="fog-orb f2"></div>
+    <div class="fog-orb f3"></div>
+    <div class="fog-orb f4"></div>
+    <div class="fog-orb f5"></div>
+  </div>
+  <div class="scan-line"></div>
+  <div class="entry-content">
+    <img src="assets/images/logo-nav.gif" alt="לוגו" class="entry-logo">
+    <button class="entry-btn" onclick="enterSite()"><span class="btn-text">&#9654; הפעל את העורך</span></button>
+    <div class="entry-subtitle">ULTIMATE EDITOR &mdash; AI POWERED</div>
+  </div>
+</div>
+
+<!-- Background Music -->
+<audio id="bgMusic" loop preload="auto">
+  <source src="assets/audio/bg-music.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Music Player (floating) -->
+<div class="music-player" id="musicPlayer">
+  <button onclick="toggleMusic()" id="musicToggle" title="השתק/הפעל">&#127925;</button>
+  <input type="range" id="musicVol" min="0" max="100" value="20" oninput="setVolume(this.value)">
+  <span class="vol-label" id="volLabel">20%</span>
+</div>
+
+<!-- Custom Cursor -->
+<div class="cursor-dot"></div>
+<div class="cursor-ring"></div>
+
+<!-- ── Navigation ── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand"><img src="assets/images/logo-nav.gif" alt="לוגו" style="height:28px;border-radius:6px;"> עורך AI אולטימטיבי</div>
+    <div class="nav-links">
+      <a href="#features">יכולות</a>
+      <a href="#gallery">צילומי מסך</a>
+      <a href="#marketplace">חנות סקריפטים</a>
+      <a href="#how">איך זה עובד</a>
+      <a href="#pricing">מחירים</a>
+      <a href="#faq">שאלות</a>
+      <a href="#download" class="nav-cta">הורדה חינם</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-orb o1"></div>
+    <div class="hero-orb o2"></div>
+  </div>
+  <div class="container">
+    <div class="hero-split">
+      <!-- Right side: Text -->
+      <div class="hero-text">
+        <div class="hero-badge">התוסף שכבש את שוק העימוד בישראל</div>
+        <h1>עימוד ספר שלם<br>בלחיצת כפתור</h1>
+        <p class="subtitle">שכחו מעבודה ידנית. עורך AI אולטימטיבי הופך את אדובי אינדיזיין למכונה אוטומטית — AI חכם שמבין עברית, 40+ כלים אוטומטיים, ותמלול קולי. הכלי שהחיים הקלים של כל מעצב ומעמד ספרים מתחילים איתו.</p>
+        <div class="cta-group">
+          <a href="#download" class="cta-btn">התחילו בחינם — 10 נקודות ביום</a>
+          <a href="#features" class="cta-btn-outline">גלו את היכולות</a>
+        </div>
+        <div class="hero-sub">
+          <span><span class="dot"></span> 10 נקודות AI חינם כל יום</span>
+          <span><span class="dot"></span> כלים אופליין ללא הגבלה</span>
+          <span><span class="dot"></span> תמיכה תוך 24 שעות בימי א-ה</span>
+        </div>
+      </div>
+      <!-- Left side: Product Mockup -->
+      <div class="hero-mockup-side">
+        <img src="assets/images/mockup.png" alt="הדמיה עורך אולטימטיבי" class="hero-mockup">
+      </div>
+    </div>
+    <!-- Explainer Video Placeholder -->
+    <div class="hero-explainer" id="explainerVideo" onclick="playExplainer(this)">
+      <div class="play-btn"></div>
+      <div class="vid-label">צפו בסרטון הסבר — 2 דקות</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CINEMATIC 1: Brand Story (Bugatti-style scroll) ═══ -->
+<section class="cinematic" id="cinematic-1">
+  <div class="cinematic-sticky">
+    <div class="cine-video-wrap">
+      <!-- ⚠️ כאשר יהיה MP4: החלף את ה-placeholder הזה ב: -->
+      <!-- <video class="cine-video" src="assets/video/hero-cinematic.mp4" muted playsinline preload="auto"></video> -->
+      <div class="cine-placeholder placeholder-style-1">
+        <div class="ph-content">
+          <div class="ph-icon">🎬</div>
+          <div class="ph-title">וידאו בקרוב</div>
+          <div class="ph-sub">CINEMATIC EXPERIENCE LOADING</div>
+        </div>
+      </div>
+    </div>
+    <div class="cine-grain"></div>
+    <div class="cine-vignette"></div>
+
+    <div class="cine-overlays">
+      <div class="cine-overlay" data-start="0.0" data-end="0.18">
+        <div class="cine-overlay-inner">
+          <h2><span class="highlight">שלמות AI</span></h2>
+          <p>הדור הבא של עימוד ספרים — בעזרת בינה מלאכותית</p>
+        </div>
+      </div>
+      <div class="cine-overlay" data-start="0.20" data-end="0.42">
+        <div class="cine-overlay-inner">
+          <h2>עורך <span class="highlight">אולטימטיבי</span></h2>
+          <p>40+ כלים חכמים, AI שמבין עברית, תמלול קולי — הכל בתוסף אחד לאדובי אינדיזיין</p>
+        </div>
+      </div>
+      <div class="cine-overlay" data-start="0.46" data-end="0.72">
+        <div class="cine-overlay-inner">
+          <span class="cine-stat">2 דק׳</span>
+          <h2>לעימוד <span class="highlight">ספר שלם</span></h2>
+          <p>300 עמודים. Gemma 4 מעבד כל עמוד ב-300ms. תוצאה ברמת מעמד מנוסה.</p>
+        </div>
+      </div>
+      <div class="cine-overlay" data-start="0.76" data-end="1.0">
+        <div class="cine-overlay-inner">
+          <h2>זה <span class="highlight">הזמן</span> לעבוד חכם</h2>
+          <p>גלול כדי לגלות איך זה עובד</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cine-progress"><div class="cine-progress-fill"></div></div>
+    <div class="cine-scroll-hint">גלול</div>
+  </div>
+</section>
+
+<!-- ── Stats ── -->
+<section class="stats">
+  <div class="container">
+    <div class="stats-grid" style="grid-template-columns:repeat(6,1fr);">
+      <div class="stat"><span class="num">40+</span><span class="lab">כלים אוטומטיים</span></div>
+      <div class="stat"><span class="num">114</span><span class="lab">פקודות AI</span></div>
+      <div class="stat"><span class="num">300ms</span><span class="lab">עימוד עמוד</span></div>
+      <div class="stat"><span class="num">100%</span><span class="lab">תמיכה בעברית</span></div>
+      <div class="stat"><span class="num">6</span><span class="lab">מנועי AI</span></div>
+      <div class="stat"><span class="num">OFFLINE</span><span class="lab">עובד אופליין</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Features ── -->
+<section class="features" id="features">
+  <div class="container">
+    <div style="text-align:center;">
+      <div class="section-tag">יכולות</div>
+      <h2 class="section-title">הכל בתוך תוסף אחד</h2>
+      <p class="section-sub">מעל 40 כלים חכמים שהופכים את אינדיזיין למכונת עימוד מושלמת</p>
+    </div>
+    <div class="fgrid">
+      <div class="fcard">
+        <div class="icon">&#129302;</div>
+        <h3>AI שמבין עברית</h3>
+        <p>שאלו שאלות, תנו הוראות בעברית — ה-AI מבין, מבצע, ומחזיר תשובה. עריכת טקסט, שינוי סגנונות, יצירת סקריפטים — הכל בשפה שלכם.</p>
+      </div>
+      <div class="fcard">
+        <div class="icon">&#128218;</div>
+        <h3>ניקוי טקסט חכם</h3>
+        <p>מנקה רווחים כפולים, מתקן פיסוק, ממיר מספרים — 20+ כללי ניקוי בלחיצה אחת. חוסך שעות של עבודה ידנית.</p>
+      </div>
+      <div class="fcard">
+        <div class="icon">&#128269;</div>
+        <h3>חיפוש GREP מתקדם</h3>
+        <p>חיפוש והחלפה עם ביטויים רגולריים ישירות מהפאנל. מציאת דפוסים, תיקון שגיאות מערכתיות, סטייל אוטומטי.</p>
+      </div>
+      <div class="fcard">
+        <div class="icon">&#127908;</div>
+        <h3>תמלול קולי</h3>
+        <p>דברו — והטקסט מופיע ישירות באינדיזיין. תמלול בזמן אמת בעברית עם פיסוק אוטומטי.</p>
+      </div>
+      <div class="fcard">
+        <div class="icon">&#9201;</div>
+        <h3>מונה שעות חכם</h3>
+        <p>עוקב אחרי זמן העבודה על כל מסמך, מחשב עלות ומייצא דוחות. חינם לנצח, ללא הגבלה.</p>
+      </div>
+      <div class="fcard">
+        <div class="icon">&#128187;</div>
+        <h3>יוצר סקריפטים</h3>
+        <p>מתארים מה רוצים בעברית — ה-AI כותב סקריפט ExtendScript מותאם אישית, בודק אותו ומריץ. אוטומציה ללא ידע בתכנות.</p>
+      </div>
+      <div class="fcard claude-card">
+        <div class="icon">&#129488;</div>
+        <h3>Claude באינדיזיין</h3>
+        <p>בדיוק כמו Claude בוורד — עורך חכם שיושב בתוך אינדיזיין. מנתח את המסמך, מתקן סגנונות, כותב קוד, ומבצע משימות מורכבות בכמה צעדים. זמין ממסלול Pro.</p>
+      </div>
+      <div class="fcard gemma-card">
+        <div class="icon">&#128214;</div>
+        <h3>עימוד מקצועי אוטומטי — Gemma 4</h3>
+        <p>מנוע AI ייעודי של גוגל לעימוד. מנתח כל עמוד ב-300ms ומתקן אלמנות, יתומים, נהרות וצפיפות שורות — תוצאה ברמת מעמד מנוסה. תמיכה מלאה בעברית, ניקוד ו-RTL.</p>
+      </div>
+      <div class="fcard">
+        <div class="icon">&#127912;</div>
+        <h3>יצירת תמונות AI</h3>
+        <p>תיאור טקסטואלי הופך לתמונה באיכות גבוהה — ישירות לתוך המסמך. עיצוב עטיפות, איורים, ורקעים בלחיצה.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Script Marketplace ── -->
+<section class="marketplace" id="marketplace">
+  <div class="container">
+    <div style="text-align:center;">
+      <div class="section-tag">חנות סקריפטים</div>
+      <h2 class="section-title">שוק הסקריפטים הראשון לאינדיזיין</h2>
+      <p class="section-sub">מהפכה בעולם האוטומציה — כל אחד יכול ליצור, למכור ולהרוויח מסקריפטים לאינדיזיין</p>
+    </div>
+    <div class="mp-grid">
+      <div class="mp-card">
+        <div class="mp-icon">&#128640;</div>
+        <h3>צרו סקריפטים ומכרו</h3>
+        <p>כתבתם סקריפט שחוסך שעות עבודה? העלו אותו לחנות, קבעו מחיר — והתחילו להרוויח. אנחנו מטפלים בתשלומים, הרישיון והפצה.</p>
+      </div>
+      <div class="mp-card">
+        <div class="mp-icon">&#128176;</div>
+        <h3>70% עמלה ליוצרים</h3>
+        <p>היוצרים מקבלים 70% מכל מכירה. בלי עלויות הצטרפות, בלי מינימום. הכסף מגיע ישירות אליכם כל חודש.</p>
+      </div>
+      <div class="mp-card">
+        <div class="mp-icon">&#127793;</div>
+        <h3>קהילה של יוצרים</h3>
+        <p>הצטרפו לקהילת מפתחים ומעצבים שמשתפים ידע, עוזרים אחד לשני ובונים כלים שמשנים את התעשייה.</p>
+      </div>
+    </div>
+    <div class="mp-highlight">
+      <h3>&#128161; למה זה מהפכני?</h3>
+      <p>עד היום, סקריפטים לאינדיזיין היו פזורים בפורומים, בלוגים ואתרים שונים — בלי סטנדרט, בלי אבטחה, ובלי דרך נוחה למכור או לקנות.
+      אנחנו בונים את הפלטפורמה הראשונה שמאחדת הכל — חנות אפליקציות לסקריפטים, ישירות מתוך אינדיזיין. כמו App Store, רק לעימוד.</p>
+      <p style="margin-top:14px;">כל סקריפט עובר בדיקת איכות ואבטחה לפני פרסום. התקנה בלחיצה אחת. עדכונים אוטומטיים. דירוגים וביקורות מהקהילה. ויוצרים יכולים לבנות עסק שלם סביב הכלים שהם כותבים.</p>
+      <p style="margin-top:14px;color:var(--gold);font-weight:600;">ברגע שבניתם סקריפט שימושי ויעיל בעזרת התוסף — תוכלו למכור אותו דרכנו בכל העולם</p>
+      <div class="mp-stats">
+        <div class="mp-stat"><span class="num">70%</span><span class="lab">עמלה ליוצרים</span></div>
+        <div class="mp-stat"><span class="num">$0</span><span class="lab">עלות הצטרפות</span></div>
+        <div class="mp-stat"><span class="num">1-Click</span><span class="lab">התקנה מיידית</span></div>
+        <div class="mp-stat"><span class="num">&#9989;</span><span class="lab">בדיקת איכות</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── How it Works ── -->
+<section class="how" id="how">
+  <div class="container">
+    <div style="text-align:center;">
+      <div class="section-tag">איך זה עובד</div>
+      <h2 class="section-title">4 צעדים וזהו</h2>
+      <p class="section-sub">מהתקנה ועד עימוד אוטומטי — בפחות מ-5 דקות</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>הורדה</h3>
+        <p>מורידים את הקובץ ומעתיקים לתיקיית התוספים</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>הפעלה</h3>
+        <p>פותחים אינדיזיין מחדש ומפעילים את הפאנל</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>חיבור AI</h3>
+        <p>מתחילים עם 10 נקודות חינם — מיד עם ההתקנה</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3>עובדים חכם</h3>
+        <p>AI + 40 כלים = עימוד מקצועי בזמן שיא</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Feature Screenshots Gallery ── -->
+<section class="screenshots-gallery" id="gallery">
+  <div class="container">
+    <div style="text-align:center;">
+      <div class="section-tag">הצצה מבפנים</div>
+      <h2 class="section-title">ראו בעצמכם — כך זה נראה</h2>
+      <p class="section-sub">צילומי מסך אמיתיים מתוך התוסף — כל כלי, כל יכולת, בפעולה</p>
+    </div>
+    <div class="scr-grid">
+      <div class="scr-card">
+        <img src="assets/screenshots/home-screen.jpg" alt="מסך פתיחה" class="scr-img">
+        <h3>מסך פתיחה — הצ'אט החכם</h3>
+        <p>ממשק נקי ואלגנטי. שאלו כל שאלה בעברית — תקנו מרכאות, סדרו טקסט לפי סגנונות, ייצאו PDF לדפוס, או נקו שגיאות עיצוב. הכל בהוראה אחת פשוטה.</p>
+      </div>
+      <div class="scr-card">
+        <img src="assets/screenshots/editor-tools.jpg" alt="עורך אולטימטיבי - כלים" class="scr-img">
+        <h3>העורך — 40+ כלים בגריד אחד</h3>
+        <p>חיפוש והחלפה, סוגריים ומרכאות, צבעים ודוגמיות, ניקוי מתקדם, ביטויי GREP, סגנונות, אוטומציה AI, ממפה סגנונות ועוד — הכל ארגון ונגיש, בלחיצה אחת.</p>
+      </div>
+      <div class="scr-card">
+        <img src="assets/screenshots/quick-actions.jpg" alt="כלים מהירים" class="scr-img">
+        <h3>כלים מהירים — Quick Actions</h3>
+        <p>6 פעולות שימושיות בגישה מיידית: סוגריים חכמים, החלפה אולטימטיבית, ניקוי טקסט, צבעים, אוטומציה ודוגם עיצוב. הפעולות הכי נפוצות — במרחק לחיצה.</p>
+      </div>
+      <div class="scr-card">
+        <img src="assets/screenshots/grep-search.jpg" alt="חיפוש GREP" class="scr-img">
+        <h3>חיפוש מתקדם — GREP</h3>
+        <p>מצאו כל דבר במסמך: מיילים, מספרים, טלפונים, לינקים, תאריכים — או הזינו ביטוי GREP חופשי. כלי חיפוש מקצועי שחוסך שעות של עבודה ידנית.</p>
+      </div>
+      <div class="scr-card">
+        <img src="assets/screenshots/script-creator.jpg" alt="יוצר סקריפטים" class="scr-img">
+        <h3>יוצר סקריפטים — AI</h3>
+        <p>צרו סקריפט חדש עם AI, תקנו סקריפט קיים, הפעילו שרשרת פעולות אוטומטית, או קבלו הסבר על קוד. אוטומציה מלאה — בלי ידע בתכנות.</p>
+      </div>
+      <div class="scr-card">
+        <img src="assets/screenshots/image-creator.jpg" alt="תמונות ויזואל" class="scr-img">
+        <h3>תמונות ויזואל</h3>
+        <p>צרו תמונות AI ישירות לתוך המסמך, שנו גודל תמונות, הציבו בעמוד, או צרו פלטת צבעים לפרויקט. כל הכלים הוויזואליים במקום אחד.</p>
+      </div>
+      <div class="scr-card">
+        <img src="assets/screenshots/doc-analyzer.jpg" alt="מנתח מסמך" class="scr-img">
+        <h3>מנתח מסמך</h3>
+        <p>ניתוח מלא אוף-ליין, ייצוא PDF לדפוס, יצירת תוכן עניינים אוטומטית, ודוח שגיאות — כל מה שצריך כדי לוודא שהמסמך מוכן להפקה.</p>
+      </div>
+      <div class="scr-card">
+        <img src="assets/screenshots/text-processor.jpg" alt="מעבד טקסט" class="scr-img">
+        <h3>מעבד טקסט — 12 כלי AI</h3>
+        <p>כתיב ודקדוק, קיצור והרחבה, שיפור ניסוח, שפה רשמית או ידידותית, תיקון פיסוק, ניקוד לעברית, סיכום, שכתוב — 12 כלים שמעבדים טקסט ברמה מקצועית.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CINEMATIC 2: Mid-site scroll (between Gallery & Testimonials) ═══ -->
+<section class="cinematic" id="cinematic-2">
+  <div class="cinematic-sticky">
+    <div class="cine-video-wrap">
+      <!-- ⚠️ כאשר יהיה MP4 שני: החלף את ה-placeholder ב: -->
+      <!-- <video class="cine-video" src="assets/video/mid-cinematic.mp4" muted playsinline preload="auto"></video> -->
+      <div class="cine-placeholder placeholder-style-2">
+        <div class="ph-content">
+          <div class="ph-title">COMING SOON</div>
+          <div class="ph-sub">VIDEO • 2026</div>
+        </div>
+      </div>
+    </div>
+    <div class="cine-grain"></div>
+    <div class="cine-vignette"></div>
+
+    <div class="cine-overlays">
+      <div class="cine-overlay" data-start="0.0" data-end="0.22">
+        <div class="cine-overlay-inner">
+          <h2>הם כבר <span class="highlight">עברו</span> לעבוד חכם</h2>
+          <p>מעצבים, מעמדים והוצאות לאור שגילו את הכוח של AI באינדיזיין</p>
+        </div>
+      </div>
+      <div class="cine-overlay" data-start="0.26" data-end="0.50">
+        <div class="cine-overlay-inner">
+          <span class="cine-stat">1400%</span>
+          <h2>שיפור ב<span class="highlight">מהירות</span> העבודה</h2>
+          <p>לקוחות מדווחים על קיצור משמעותי של זמני עימוד, פחות טעויות, ויותר פרויקטים בחודש</p>
+        </div>
+      </div>
+      <div class="cine-overlay" data-start="0.54" data-end="0.78">
+        <div class="cine-overlay-inner">
+          <h2>"ממש <span class="highlight">משנה מציאות</span>"</h2>
+          <p>— צח מלול, מעצב ומעמד מקצועי</p>
+        </div>
+      </div>
+      <div class="cine-overlay" data-start="0.82" data-end="1.0">
+        <div class="cine-overlay-inner">
+          <h2>התור <span class="highlight">שלך</span> הגיע</h2>
+          <p>ראה מה אומרים עלינו — מיד</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cine-progress"><div class="cine-progress-fill"></div></div>
+  </div>
+</section>
+
+<!-- ── Testimonials ── -->
+<section class="testimonials">
+  <div class="container">
+    <div style="text-align:center;">
+      <div class="section-tag">מה אומרים</div>
+      <h2 class="section-title">מה כותבים עלינו בשטח</h2>
+      <p class="section-sub">צילומי מסך אמיתיים מלקוחות — פורומים, הודעות ומיילים</p>
+    </div>
+
+    <!-- Real Customer Screenshots -->
+    <h3 style="text-align:center;margin-top:8px;font-size:1.2rem;font-weight:700;color:var(--gold);">&#128248; ביקורות אמיתיות</h3>
+    <p style="text-align:center;color:var(--muted);font-size:.88rem;margin-bottom:28px;">צילומי מסך אמיתיים מלקוחות — פורומים, הודעות ומיילים</p>
+    <div class="tscr-grid">
+      <div class="tscr-card forum">
+        <img src="assets/testimonials/efirion-publishing.jpg" alt="אפיריון הוצאה לאור" class="tscr-img">
+        <div class="tscr-source">&#128488; פורום מעצבים</div>
+        <div class="tscr-author">אפיריון — הוצאה לאור</div>
+        <div class="tscr-role">ביקורת מפורטת על התוסף — "אחד הפרויקטים הכי מורכבים שיש בעולם" + המלצה חמה</div>
+      </div>
+      <div class="tscr-card email">
+        <img src="assets/testimonials/shlomo-prazon.jpg" alt="המלצה שלמה פרזון" class="tscr-img">
+        <div class="tscr-source">&#9993; טופס יצירת קשר</div>
+        <div class="tscr-author">שלמה</div>
+        <div class="tscr-role">"הסקריפט החדש עורך האולטימטיבי — מאוד מושקע ואיכותי"</div>
+      </div>
+      <div class="tscr-card forum">
+        <img src="assets/testimonials/chen-samui.jpg" alt="חן סמואי" class="tscr-img">
+        <div class="tscr-source">&#128488; פורום</div>
+        <div class="tscr-author">חן סמואי — מעצב ומעמד מקצועי</div>
+        <div class="tscr-role">"הבשורה שאתם מביאים לעולם התורה היא ענקית... המשיכו לייצר לנו סקריפטים שווים!"</div>
+      </div>
+      <div class="tscr-card forum">
+        <img src="assets/testimonials/israela.jpg" alt="ישראלה" class="tscr-img">
+        <div class="tscr-source">&#128488; פורום</div>
+        <div class="tscr-author">ישראלה</div>
+        <div class="tscr-role">"הואו! אין מילים לשכלול המטאורי של העורך האולטימטיבי — חלום של כל מעמד באינדיזיין!"</div>
+      </div>
+      <div class="tscr-card email">
+        <img src="assets/testimonials/mordechai.png" alt="מרדכי" class="tscr-img">
+        <div class="tscr-source">&#9993; טופס יצירת קשר</div>
+        <div class="tscr-author">מרדכי</div>
+        <div class="tscr-role">"תודה רבה על הסקריפט המטורף ועוד בכזה מחיר! אתמול קניתי וכבר הספקתי להשתמש יותר מסקריפטים אחרים שקניתי מזמן"</div>
+      </div>
+      <div class="tscr-card whatsapp">
+        <img src="assets/testimonials/studio-rimon.png" alt="סטודיו רימון" class="tscr-img">
+        <div class="tscr-source">&#128172; הודעה</div>
+        <div class="tscr-author">סטודיו רימון</div>
+        <div class="tscr-role">"מהשימוש הראשוני זה נראה מדהים ביותר... הסקריפט הזה הולך להרוויח למשתמשים הרבה"</div>
+      </div>
+      <div class="tscr-card forum">
+        <img src="assets/testimonials/tzach-malul.png" alt="צח מלול" class="tscr-img">
+        <div class="tscr-source">&#128488; פורום — עימוד מקצועי</div>
+        <div class="tscr-author">צח מלול</div>
+        <div class="tscr-role">"בתור חובב אינדיזיין מושבע... הסקריפט של חברי ואהובי איתמר הוא לא עוד סקריפט — אלא ממש משנה מציאות"</div>
+      </div>
+      <div class="tscr-card forum">
+        <img src="assets/testimonials/ta-hazi.png" alt="תא חזי" class="tscr-img">
+        <div class="tscr-source">&#128488; פורום</div>
+        <div class="tscr-author">תא חזי</div>
+        <div class="tscr-role">ביקורת מעמיקה על יכולות התוסף והשוואה לכלים אחרים בשוק</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Free Trial ── -->
+<section class="trial">
+  <div class="container">
+    <div class="trial-box">
+      <h3>חינם לנצח — 10 נקודות AI כל יום, בלי התחייבות</h3>
+      <p>מונה שעות ללא הגבלה + כלים בסיסיים + Gemini Flash AI. נגמרו הנקודות? שדרגו מ-$5 בלבד או קנו חבילת נקודות חד-פעמית.</p>
+      <a href="#download" class="cta-btn" style="font-size:.9rem;padding:14px 32px;">אני רוצה לנסות</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Pricing ── -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="pricing-header">
+      <div class="section-tag">מחירים</div>
+      <h2 class="section-title">תוכניות שמתאימות לכל אחד</h2>
+      <p class="section-sub">התחילו בחינם עם 10 נקודות ביום. שדרגו כשמוכנים.</p>
+    </div>
+    <div class="plans">
+      <div class="plan free-plan">
+        <h3>חינמי</h3>
+        <div class="price">$0</div>
+        <div class="per">10 נקודות ביום — לנצח</div>
+        <ul>
+          <li>Gemini Flash AI</li>
+          <li>מונה שעות ללא הגבלה</li>
+          <li>כלים בסיסיים מוגבלים</li>
+          <li>1 סקריפט ביום</li>
+        </ul>
+        <a href="#download" class="btn">הורד בחינם</a>
+      </div>
+      <div class="plan">
+        <h3>Starter</h3>
+        <div class="price">$5 <small>/חודש</small></div>
+        <div class="per">$48/שנה (חיסכון 20%)</div>
+        <ul>
+          <li>200 נקודות AI בחודש</li>
+          <li>GPT-4o mini + Claude Haiku</li>
+          <li>כלים ללא הגבלה</li>
+          <li>עימוד Gemma 4</li>
+          <li>חנות סקריפטים</li>
+        </ul>
+        <a href="#" class="btn">שדרג ל-Starter</a>
+      </div>
+      <div class="plan popular">
+        <h3>Pro</h3>
+        <div class="price">$10 <small>/חודש</small></div>
+        <div class="per">$96/שנה (חיסכון 20%)</div>
+        <ul>
+          <li>500 נקודות AI בחודש</li>
+          <li>כל המנועים כולל Claude Sonnet</li>
+          <li>כלים ללא הגבלה</li>
+          <li>Claude באינדיזיין</li>
+          <li>Smart Routing אוטומטי</li>
+          <li>יצירת תמונות AI</li>
+        </ul>
+        <a href="#" class="btn">שדרג ל-Pro</a>
+      </div>
+      <div class="plan">
+        <h3>Advanced</h3>
+        <div class="price">$15 <small>/חודש</small></div>
+        <div class="per">$144/שנה (חיסכון 20%)</div>
+        <ul>
+          <li>1,000 נקודות AI בחודש</li>
+          <li>כל המנועים + עדיפות</li>
+          <li>Claude מתקדם באינדיזיין</li>
+          <li>תמיכה מועדפת</li>
+          <li>עימוד ספרים שלמים</li>
+        </ul>
+        <a href="#" class="btn">שדרג ל-Advanced</a>
+      </div>
+      <div class="plan">
+        <h3>Premium</h3>
+        <div class="price">$20 <small>/חודש</small></div>
+        <div class="per">$192/שנה (חיסכון 20%)</div>
+        <ul>
+          <li>2,000 נקודות AI בחודש</li>
+          <li>כל המנועים + Claude Opus</li>
+          <li>Claude Ultra באינדיזיין</li>
+          <li>תמיכה VIP תוך שעה</li>
+          <li>גישה מוקדמת לפיצ'רים</li>
+        </ul>
+        <a href="#" class="btn">שדרג ל-Premium</a>
+      </div>
+    </div>
+
+    <!-- Comparison Table -->
+    <div class="compare-table">
+      <table>
+        <thead>
+          <tr>
+            <th>פיצ'ר</th>
+            <th>חינמי</th>
+            <th>Starter $5</th>
+            <th class="highlight-col">Pro $10</th>
+            <th>Advanced $15</th>
+            <th>Premium $20</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>מונה שעות</td><td class="check">&#10003; ללא הגבלה</td><td class="check">&#10003;</td><td class="check highlight-col">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>נקודות AI</td><td>10/יום</td><td>200/חודש</td><td class="highlight-col"><strong>500/חודש</strong></td><td>1,000/חודש</td><td>2,000/חודש</td></tr>
+          <tr><td>מנוע AI חינמי</td><td>Gemini Flash</td><td>Flash + GPT mini</td><td class="highlight-col">כל המנועים</td><td>כל המנועים</td><td>כל המנועים</td></tr>
+          <tr><td>Claude באינדיזיין</td><td class="no">—</td><td class="no">—</td><td class="check highlight-col">&#10003; Sonnet</td><td class="check">&#10003; Sonnet</td><td class="check">&#10003; Opus</td></tr>
+          <tr><td>עימוד Gemma 4</td><td class="no">—</td><td class="check">&#10003;</td><td class="check highlight-col">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>ניקוי טקסט</td><td>3/יום</td><td class="check">&#10003; ללא הגבלה</td><td class="check highlight-col">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>חיפוש/GREP</td><td>5/יום</td><td class="check">&#10003; ללא הגבלה</td><td class="check highlight-col">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>יצירת סקריפט</td><td>1/יום</td><td class="check">&#10003;</td><td class="check highlight-col">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>יצירת תמונות AI</td><td class="no">—</td><td class="no">—</td><td class="check highlight-col">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>חנות סקריפטים</td><td class="no">—</td><td class="check">&#10003;</td><td class="check highlight-col">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Smart Routing</td><td class="no">—</td><td class="no">—</td><td class="check highlight-col">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>תמיכה</td><td>פורום</td><td>תוך 24 שעות בימי א-ה</td><td class="highlight-col">תוך 24 שעות בימי א-ה</td><td>מועדפת בימי א-ה</td><td><strong>VIP תוך שעה בימי א-ה</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── Download / Registration ── -->
+<section class="download-section" id="download">
+  <div class="container">
+    <div class="download-box">
+      <div class="gift-badge">&#127873; גרסה 10 — חינם לתקופה מוגבלת!</div>
+      <h2>הורדה חינם</h2>
+      <p>הזינו את האימייל שלכם כדי לקבל את התוסף + מפתח רישיון אישי + מדריך התקנה מלא בעברית.</p>
+      <a href="https://ultimate-tools.lemonsqueezy.com/checkout/buy/e7fd713b-7978-434c-a64c-f8b7ab78469c" class="dl-btn" style="display:inline-block;text-align:center;text-decoration:none;margin-top:18px;"><span class="btn-text-dl">הורדה חינם — Studio Shlemut AI v10</span></a>
+      <div class="disclaimer" style="margin-top:12px;">✅ כולל מפתח רישיון אישי &nbsp;•&nbsp; ✅ התקנה בלחיצה אחת &nbsp;•&nbsp; ✅ תמיכה מלאה בעברית</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="faq-header">
+      <div class="section-tag">שאלות נפוצות</div>
+      <h2 class="section-title">יש שאלות? יש תשובות</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q">מה זה נקודות AI?</div>
+        <div class="faq-a"><p>כל פעולת AI צורכת נקודות. שאלה פשוטה = 1 נקודה, Claude Sonnet = 5 נקודות, יצירת תמונה = 10. במסלול חינמי מקבלים 10 נקודות ביום עם Gemini Flash. מנויים מקבלים 200-2,000 נקודות בחודש עם גישה לכל המנועים.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">מה קורה כשנגמרות הנקודות?</div>
+        <div class="faq-a"><p>במסלול חינמי — הנקודות מתחדשות כל יום. במנויים בתשלום — הנקודות מתחדשות כל חודש. רוצים עוד? אפשר לקנות חבילות נקודות חד-פעמיות החל מ-$3. הכלים המקומיים (ניקוי, חיפוש, מונה שעות) עובדים תמיד.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">מה זה Claude באינדיזיין?</div>
+        <div class="faq-a"><p>בדיוק כמו ש-Claude עובד בתוך Word, אצלנו הוא עובד ישירות באינדיזיין. Claude מבין את המסמך שלכם, מנתח את העימוד, כותב סקריפטים, מתקן סגנונות, ומבצע משימות מורכבות בכמה צעדים — הכל בעברית. זמין ממסלול Pro ומעלה.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">מה זה עימוד Gemma 4?</div>
+        <div class="faq-a"><p>Gemma 4 הוא מנוע AI ייעודי של גוגל שאנחנו שילבנו לעימוד מקצועי. הוא מנתח כל עמוד ב-300 מילישניות ומתקן אוטומטית בעיות כמו אלמנות, יתומים, נהרות, וצפיפות שורות — תוצאה ברמת מעמד מנוסה. עובד מושלם עם עברית, ניקוד ו-RTL.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">מתאים להוצאות לאור?</div>
+        <div class="faq-a"><p>בהחלט. הוצאות לאור שעובדות עם כמה מעמדים חוסכות תקציבים משמעותיים. עימוד Gemma 4 מעבד ספר שלם של 300 עמודים בפחות מ-2 דקות. כל מעמד עובד מהר יותר, עם פחות טעויות, ויכול לקחת יותר פרויקטים.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">זה עובד בלי אינטרנט?</div>
+        <div class="faq-a"><p>חלק גדול מהכלים עובד אופליין. רק פיצ'רים שדורשים AI צריכים חיבור. גם אם נפל האינטרנט — ממשיכים לעבוד.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">באיזה גרסה של אינדיזיין זה עובד?</div>
+        <div class="faq-a"><p>Adobe InDesign CC 2019 ומעלה (גרסה 14+). Windows ו-Mac.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">איך מתקינים?</div>
+        <div class="faq-a"><p>מורידים, מעתיקים לתיקיית התוספים, ופותחים מחדש. פחות מדקה. מדריך מלא מגיע עם הקובץ.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">אני מפתח — אפשר להתחבר עם מפתח API עצמי?</div>
+        <div class="faq-a"><p>כן! למפתחים ומשתמשים מתקדמים יש אזור מפתחים ייעודי בתוך התוסף. שם ניתן לחבר מפתחות API עצמיים של OpenAI, Google, Anthropic ועוד — וליהנות מגישה חופשית ללא מגבלת נקודות. <a href="#contact">צרו קשר</a> לפרטים על גישת מפתחים.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Contact / Support ── -->
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="contact-header">
+      <div class="section-tag">צור קשר</div>
+      <h2 class="section-title">תמיכה מלאה תוך 24 שעות בימי א-ה</h2>
+      <p class="section-sub">אנחנו כאן בשבילכם בימי ראשון עד חמישי — שאלות, בעיות, בקשות פיצ'רים. תמיד שמחים לעזור.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="c-icon">&#9993;</div>
+        <h3>אימייל</h3>
+        <p>שלחו לנו מייל ונחזור אליכם תוך 24 שעות בימי א-ה.</p>
+        <a href="#" class="reveal-email" onclick="this.textContent='shlmut@otzmashelkesher.co.il';this.href='mailto:shlmut@otzmashelkesher.co.il';this.onclick=null;return false;">לחצו לחשיפת כתובת המייל</a>
+      </div>
+      <div class="contact-card">
+        <div class="c-icon">&#128218;</div>
+        <h3>מדריכים והדרכה</h3>
+        <p>מדריכי וידאו, תיעוד מלא ומדריך התחלה מהירה — הכל בעברית.</p>
+        <a href="#">למרכז הידע</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Final CTA ── -->
+<section class="final-cta">
+  <div class="container">
+    <div class="final-box">
+      <h2>מוכנים <span>לשנות את דרך העבודה</span>?</h2>
+      <p>הצטרפו למעמדים, מעצבים והוצאות לאור שכבר עובדים חכם. עימוד ספר שלם בלחיצת כפתור — זו לא עתידנות, זו המציאות.</p>
+      <a href="#download" class="cta-btn">התחילו בחינם עכשיו</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="assets/images/logo-nav.gif" alt="לוגו" style="height:36px;border-radius:8px;margin-bottom:6px;display:block;">
+        <h4>עורך AI אולטימטיבי</h4>
+        <p>התוסף החכם ביותר לאדובי אינדיזיין</p>
+      </div>
+      <div class="footer-links">
+        <a href="#features">יכולות</a>
+        <a href="#pricing">מחירים</a>
+        <a href="#faq">שאלות נפוצות</a>
+        <a href="#contact">צור קשר</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024-2026 עורך AI אולטימטיבי. כל הזכויות שמורות.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/cinematic.js"></script>
+
 </body>
 </html>

@@ -1,0 +1,369 @@
+/* ═══════════════════════════════════════════════════════════════
+   CINEMATIC SCROLL SECTIONS — Bugatti-style scroll storytelling
+   ═══════════════════════════════════════════════════════════════ */
+
+.cinematic {
+  position: relative;
+  width: 100%;
+  /* 500vh = medium scroll experience */
+  height: 500vh;
+  background: #000;
+  overflow: visible;
+}
+
+.cinematic-sticky {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+}
+
+/* ── Video / placeholder stage ── */
+.cine-video-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.cine-video,
+.cine-placeholder {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 100%; height: 100%;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  pointer-events: none;
+}
+
+/* ── Placeholder 1: Pulse gradient with camera icon ── */
+.placeholder-style-1 {
+  background:
+    radial-gradient(ellipse at center,
+      rgba(212,168,67,.15) 0%,
+      rgba(108,99,255,.08) 35%,
+      #000 75%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.placeholder-style-1 .ph-content {
+  text-align: center;
+  animation: phFloat 6s ease-in-out infinite;
+}
+.placeholder-style-1 .ph-icon {
+  font-size: 7rem;
+  filter: drop-shadow(0 0 40px rgba(212,168,67,.6));
+  animation: phPulse 3s ease-in-out infinite;
+  margin-bottom: 24px;
+}
+.placeholder-style-1 .ph-title {
+  font-size: 2.6rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #ff0000, #ff8000, #ffff00, #00ff00, #00ffff, #8000ff, #ff0080, #ff0000);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: rgbText 5s linear infinite;
+  margin-bottom: 12px;
+}
+.placeholder-style-1 .ph-sub {
+  color: rgba(255,255,255,.6);
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+}
+
+/* ── Placeholder 2: Shimmer strips / scanning lines ── */
+.placeholder-style-2 {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1020 50%, #0a0a0a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.placeholder-style-2::before,
+.placeholder-style-2::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #d4a843, transparent);
+  animation: scanLine 4s linear infinite;
+  opacity: .5;
+}
+.placeholder-style-2::before { top: 30%; }
+.placeholder-style-2::after { top: 70%; animation-delay: 2s; animation-direction: reverse; }
+.placeholder-style-2 .ph-content {
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+.placeholder-style-2 .ph-title {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 4px;
+  margin-bottom: 16px;
+  text-shadow: 0 0 40px rgba(212,168,67,.5);
+  animation: phShimmer 3s ease-in-out infinite;
+}
+.placeholder-style-2 .ph-sub {
+  color: var(--gold);
+  font-size: 1.2rem;
+  letter-spacing: 6px;
+  font-weight: 600;
+}
+
+/* ── Placeholder 3: Orbiting particles + film frame ── */
+.placeholder-style-3 {
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.placeholder-style-3 .ph-frame {
+  position: relative;
+  width: 60%;
+  aspect-ratio: 16/9;
+  max-width: 720px;
+  border: 2px solid rgba(212,168,67,.3);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow:
+    0 0 80px rgba(212,168,67,.2),
+    inset 0 0 60px rgba(212,168,67,.1);
+}
+.placeholder-style-3 .ph-frame::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 16px;
+  background: conic-gradient(from 0deg, transparent, #d4a843, transparent, transparent);
+  animation: orbit 4s linear infinite;
+  z-index: -1;
+}
+.placeholder-style-3 .ph-content {
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+.placeholder-style-3 .ph-icon {
+  font-size: 5rem;
+  animation: phRotate 8s linear infinite;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 30px rgba(212,168,67,.8));
+}
+.placeholder-style-3 .ph-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 10px;
+}
+.placeholder-style-3 .ph-sub {
+  color: rgba(212,168,67,.9);
+  font-size: 1rem;
+  letter-spacing: 3px;
+}
+
+/* ── Overlays (text layers above video) ── */
+.cine-overlays {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.cine-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(.4,0,.2,1),
+              transform 0.9s cubic-bezier(.25,.8,.3,1);
+  transform: translateY(40px) scale(.98);
+}
+.cine-overlay.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.cine-overlay-inner {
+  text-align: center;
+  padding: 40px 60px;
+  max-width: 1000px;
+  background: rgba(10,10,10,.35);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(212,168,67,.18);
+  border-radius: 28px;
+  box-shadow:
+    0 20px 80px rgba(0,0,0,.6),
+    inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.cine-overlay h2 {
+  font-size: clamp(2.6rem, 6vw, 5.2rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin-bottom: 20px;
+  color: #fff;
+  text-shadow: 0 4px 40px rgba(0,0,0,.8);
+}
+
+.cine-overlay h2 .highlight {
+  background: linear-gradient(90deg, #d4a843, #f0d078, #d4a843);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: goldSlide 4s linear infinite;
+}
+
+.cine-overlay p {
+  font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+  color: rgba(255,255,255,.88);
+  line-height: 1.6;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.cine-overlay .cine-stat {
+  font-size: clamp(4rem, 10vw, 9rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, #d4a843, #f0d078);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  display: block;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 8px 40px rgba(212,168,67,.4));
+}
+
+/* ── Film grain effect ── */
+.cine-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  opacity: .08;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='.5'/></svg>");
+  mix-blend-mode: overlay;
+  animation: grainShift .25s steps(4) infinite;
+}
+
+/* ── Vignette ── */
+.cine-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,.7) 100%);
+}
+
+/* ── Progress indicator ── */
+.cine-progress {
+  position: absolute;
+  bottom: 36px; left: 50%;
+  transform: translateX(-50%);
+  width: min(420px, 60vw);
+  height: 3px;
+  background: rgba(255,255,255,.1);
+  border-radius: 2px;
+  overflow: hidden;
+  z-index: 12;
+}
+.cine-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #d4a843, #f0d078);
+  box-shadow: 0 0 12px rgba(212,168,67,.6);
+  transition: width .15s ease-out;
+}
+
+/* ── Scroll hint (first cinematic only) ── */
+.cine-scroll-hint {
+  position: absolute;
+  bottom: 70px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 13;
+  color: rgba(255,255,255,.7);
+  font-size: .85rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  animation: scrollHintBounce 2s ease-in-out infinite;
+  pointer-events: none;
+}
+.cine-scroll-hint::after {
+  content: '↓';
+  display: block;
+  font-size: 1.6rem;
+  margin-top: 6px;
+}
+.cine-sticky-hide .cine-scroll-hint { opacity: 0; transition: opacity .4s; }
+
+/* ── Animations ── */
+@keyframes phFloat {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+@keyframes phPulse {
+  0%,100% { transform: scale(1); filter: drop-shadow(0 0 40px rgba(212,168,67,.6)); }
+  50% { transform: scale(1.12); filter: drop-shadow(0 0 60px rgba(212,168,67,.9)); }
+}
+@keyframes phRotate {
+  from { transform: rotate(0); }
+  to { transform: rotate(360deg); }
+}
+@keyframes phShimmer {
+  0%,100% { text-shadow: 0 0 40px rgba(212,168,67,.5); }
+  50% { text-shadow: 0 0 80px rgba(212,168,67,1), 0 0 120px rgba(212,168,67,.5); }
+}
+@keyframes scanLine {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}
+@keyframes orbit {
+  from { transform: rotate(0); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes goldSlide {
+  from { background-position: 200% 0; }
+  to   { background-position: 0 0; }
+}
+@keyframes grainShift {
+  0% { transform: translate(0,0); }
+  25%{ transform: translate(-5%,5%); }
+  50%{ transform: translate(5%,-3%); }
+  75%{ transform: translate(-3%,-5%); }
+  100%{ transform: translate(3%,3%); }
+}
+@keyframes scrollHintBounce {
+  0%,100% { transform: translate(-50%, 0); opacity: .5; }
+  50%     { transform: translate(-50%, 8px); opacity: 1; }
+}
+
+/* ── Section separators ── */
+.cinematic + section { position: relative; z-index: 2; }
+
+/* ── Mobile: shorten scroll experience ── */
+@media (max-width: 768px) {
+  .cinematic { height: 350vh; }
+  .cine-overlay-inner {
+    padding: 28px 24px;
+    margin: 0 16px;
+  }
+  .cine-overlay h2 { font-size: 2rem; }
+  .cine-overlay p { font-size: 1rem; }
+  .placeholder-style-1 .ph-title,
+  .placeholder-style-2 .ph-title,
+  .placeholder-style-3 .ph-title { font-size: 1.8rem; }
+}

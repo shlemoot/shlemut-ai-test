@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/סטודיו שלימות/.claude/**)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\סטודיו שלימות\\.claude"
+    ]
+  }
+}
